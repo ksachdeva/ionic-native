@@ -1,5 +1,5 @@
 import { Cordova, CordovaInstance, Plugin } from './plugin';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from '@reactivex/rxjs';
 
 
 /**
@@ -48,20 +48,51 @@ export const GoogleMapsAnimation = {
  * ```
  * import { GoogleMap, GoogleMapsEvent } from 'ionic-native';
  *
- * ...
+ * // create a new map using element ID
+ * let map = new GoogleMap('elementID');
  *
- * // somewhere in your component
- * let map = new GoogleMap('elementID', {
- *  // Map Options: https://developers.google.com/maps/documentation/javascript/3.exp/reference#MapOptions
- });
+ * // or create a new map by passing HTMLElement
+ * let element: HTMLElement = document.getElementById('elementID');
  *
- * map.on(GoogleMapsEvent.MAP_READY).subscribe(() => console.log('Map is ready!'));
+ * // In Angular 2 or Ionic 2, if we have this element in html: <div #map></div>
+ * // then we can use @ViewChild to find the element and pass it to GoogleMaps
+ * @ViewChild('map') mapElement;
+ * let map = new GoogleMap(mapElement);
+ *
+ * // listen to MAP_READY event
+ * map.one(GoogleMapsEvent.MAP_READY).subscribe(() => console.log('Map is ready!'));
+ *
+ *
+ * // create LatLng object
+ * let ionic: GoogleMapsLatLng = new GoogleMapsLatLng(43.0741904,-89.3809802);
+ *
+ * // create CameraPosition
+ * let position: CameraPosition = {
+ *   target: ionic,
+ *   zoom: 18,
+ *   tilt: 30
+ * };
+ *
+ * // move the map's camera to position
+ * map.moveCamera(position);
+ *
+ * // create new marker
+ * let markerOptions: GoogleMapsMarkerOptions = {
+ *   position: ionic,
+ *   title: 'Ionic'
+ * };
+ *
+ * map.addMarker(markerOptions)
+ *   .then((marker: GoogleMapsMarker) => {
+ *     marker.showInfoWindow();
+ *   });
  * ```
  */
 @Plugin({
   pluginRef: 'plugin.google.maps.Map',
   plugin: 'cordova-plugin-googlemaps',
-  repo: 'https://github.com/mapsplugin/cordova-plugin-googlemaps'
+  repo: 'https://github.com/mapsplugin/cordova-plugin-googlemaps',
+  install: 'ionic plugin add cordova-plugin-googlemaps --variable API_KEY_FOR_ANDROID="YOUR_ANDROID_API_KEY_IS_HERE" --variable API_KEY_FOR_IOS="YOUR_IOS_API_KEY_IS_HERE"'
 })
 export class GoogleMap {
   _objectInstance: any;
@@ -76,8 +107,9 @@ export class GoogleMap {
     return;
   }
 
-  constructor(elementId: string, options?: any) {
-    this._objectInstance = plugin.google.maps.Map.getMap(document.getElementById(elementId), options);
+  constructor(element: string|HTMLElement, options?: any) {
+    if (typeof element === 'string') element = document.getElementById(<string>element);
+    this._objectInstance = plugin.google.maps.Map.getMap(element, options);
   }
 
   /**
@@ -172,13 +204,11 @@ export class GoogleMap {
   setTilt(tiltLevel: number): void {
   }
 
-  @CordovaInstance({ sync: true })
-  animateCamera(animateCameraOptions: AnimateCameraOptions): void {
-  }
+  @CordovaInstance()
+  animateCamera(animateCameraOptions: AnimateCameraOptions): Promise<any> { return; }
 
-  @CordovaInstance({ sync: true })
-  moveCamera(cameraPosition: CameraPosition): void {
-  }
+  @CordovaInstance()
+  moveCamera(cameraPosition: CameraPosition): Promise<any> { return; }
 
   @CordovaInstance({ sync: true })
   setMyLocationEnabled(enabled: boolean): void {
@@ -355,7 +385,7 @@ export class GoogleMap {
  * @private
  */
 export interface AnimateCameraOptions {
-  target?: GoogleMapsLatLng;
+  target?: GoogleMapsLatLng | Array<GoogleMapsMarker> | GoogleMapsLatLngBounds;
   tilt?: number;
   zoom?: number;
   bearing?: number;

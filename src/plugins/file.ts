@@ -1,4 +1,5 @@
-import {Plugin, Cordova} from './plugin';
+import { Plugin, Cordova } from './plugin';
+
 declare var window: any;
 declare var cordova: any;
 
@@ -429,7 +430,7 @@ export class File {
       create: true
     };
 
-    if (replace) {
+    if (!replace) {
       options.exclusive = true;
     }
 
@@ -657,12 +658,12 @@ export class File {
    *
    * @param {string} path Base FileSystem. Please refer to the iOS and Android filesystems above
    * @param {string} fileName path relative to base path
-   * @param {string} text content to write
+   * @param {string | Blob} text content or blob to write
    * @param {boolean | WriteOptions} replaceOrOptions replace file if set to true. See WriteOptions for more information.
    * @returns {Promise<void>} Returns a Promise that resolves or rejects with an error.
    */
   static writeFile(path: string, fileName: string,
-                   text: string, replaceOrOptions: boolean | WriteOptions): Promise<void> {
+                   text: string | Blob, replaceOrOptions: boolean | WriteOptions): Promise<void> {
     if ((/^\//.test(fileName))) {
       let err = new FileError(5);
       err.message = 'file-name cannot start with \/';
@@ -700,10 +701,10 @@ export class File {
    *
    * @param {string} path Base FileSystem. Please refer to the iOS and Android filesystems above
    * @param {string} fileName path relative to base path
-   * @param {string} text content to write
+   * @param {string | Blob} text content or blob to write
    * @returns {Promise<void>} Returns a Promise that resolves or rejects with an error.
    */
-  static writeExistingFile(path: string, fileName: string, text: string): Promise<void> {
+  static writeExistingFile(path: string, fileName: string, text: string | Blob): Promise<void> {
     if ((/^\//.test(fileName))) {
       let err = new FileError(5);
       err.message = 'file-name cannot start with \/';
@@ -742,7 +743,7 @@ export class File {
       })
       .then((fe) => {
         let reader = new FileReader();
-        return new Promise((resolve, reject) => {
+        return new Promise<any>((resolve, reject) => {
           reader.onloadend = () => {
             if (reader.result !== undefined || reader.result !== null) {
               resolve(reader.result);
@@ -756,7 +757,7 @@ export class File {
             reader.readAsText(file);
           }, error => {
             reject(error);
-          })
+          });
 
         });
       });
@@ -783,7 +784,7 @@ export class File {
       })
       .then((fe) => {
         let reader = new FileReader();
-        return new Promise((resolve, reject) => {
+        return new Promise<any>((resolve, reject) => {
           reader.onloadend = () => {
             if (reader.result !== undefined || reader.result !== null) {
               resolve(reader.result);
@@ -800,7 +801,7 @@ export class File {
             reader.readAsDataURL(file);
           }, error => {
             reject(error);
-          })
+          });
         });
       });
   }
@@ -825,7 +826,7 @@ export class File {
       })
       .then((fe) => {
         let reader = new FileReader();
-        return new Promise((resolve, reject) => {
+        return new Promise<any>((resolve, reject) => {
           reader.onloadend = () => {
             if (reader.result !== undefined || reader.result !== null) {
               resolve(reader.result);
@@ -840,7 +841,7 @@ export class File {
             reader.readAsBinaryString(file);
           }, error => {
             reject(error);
-          })
+          });
 
         });
       });
@@ -866,7 +867,7 @@ export class File {
       })
       .then((fe) => {
         let reader = new FileReader();
-        return new Promise((resolve, reject) => {
+        return new Promise<any>((resolve, reject) => {
           reader.onloadend = () => {
             if (reader.result !== undefined || reader.result !== null) {
               resolve(reader.result);
@@ -881,7 +882,7 @@ export class File {
             reader.readAsArrayBuffer(file);
           }, error => {
             reject(error);
-          })
+          });
 
         });
       });
@@ -950,13 +951,18 @@ export class File {
   // these private methods help avoid cascading error handling
   // in the public ones, primarily simply wrapping callback
   // operations to return Promises that can then be chained.
-
+  /**
+   * @private
+   */
   private static fillErrorMessage(err: FileError): void {
     err.message = File.cordovaFileError[err.code];
   }
 
+  /**
+   * @private
+   */
   private static resolveLocalFilesystemUrl(furl: string): Promise<Entry> {
-    return new Promise((resolve, reject) => {
+    return new Promise<Entry>((resolve, reject) => {
       try {
         window.resolveLocalFileSystemURL(furl, (entry) => {
           resolve(entry);
@@ -971,6 +977,9 @@ export class File {
     });
   }
 
+  /**
+   * @private
+   */
   private static resolveDirectoryUrl(durl: string): Promise<DirectoryEntry> {
     return File.resolveLocalFilesystemUrl(durl)
       .then((de) => {
@@ -984,8 +993,11 @@ export class File {
       });
   }
 
+  /**
+   * @private
+   */
   private static getDirectory(fse: DirectoryEntry, dn: string, flags: Flags): Promise<DirectoryEntry> {
-    return new Promise((resolve, reject) => {
+    return new Promise<DirectoryEntry>((resolve, reject) => {
       try {
         fse.getDirectory(dn, flags, (de) => {
           resolve(de);
@@ -1000,8 +1012,11 @@ export class File {
     });
   }
 
+  /**
+   * @private
+   */
   private static getFile(fse: DirectoryEntry, fn: string, flags: Flags): Promise<FileEntry> {
-    return new Promise((resolve, reject) => {
+    return new Promise<FileEntry>((resolve, reject) => {
       try {
         fse.getFile(fn, flags, (fe) => {
           resolve(fe);
@@ -1016,8 +1031,11 @@ export class File {
     });
   }
 
+  /**
+   * @private
+   */
   private static remove(fe: Entry): Promise<RemoveResult> {
-    return new Promise((resolve, reject) => {
+    return new Promise<RemoveResult>((resolve, reject) => {
       fe.remove(() => {
         resolve({success: true, fileRemoved: fe});
       }, (err) => {
@@ -1027,8 +1045,11 @@ export class File {
     });
   }
 
+  /**
+   * @private
+   */
   private static move(srce: Entry, destdir: DirectoryEntry, newName: string): Promise<Entry> {
-    return new Promise((resolve, reject) => {
+    return new Promise<Entry>((resolve, reject) => {
       srce.moveTo(destdir, newName, (deste) => {
         resolve(deste);
       }, (err) => {
@@ -1038,8 +1059,11 @@ export class File {
     });
   }
 
+  /**
+   * @private
+   */
   private static copy(srce: Entry, destdir: DirectoryEntry, newName: string): Promise<Entry> {
-    return new Promise((resolve, reject) => {
+    return new Promise<Entry>((resolve, reject) => {
       srce.copyTo(destdir, newName, (deste) => {
         resolve(deste);
       }, (err) => {
@@ -1049,8 +1073,11 @@ export class File {
     });
   }
 
+  /**
+   * @private
+   */
   private static readEntries(dr: DirectoryReader): Promise<Entry[]> {
-    return new Promise((resolve, reject) => {
+    return new Promise<Entry[]>((resolve, reject) => {
       dr.readEntries((entries) => {
         resolve(entries);
       }, (err) => {
@@ -1060,8 +1087,11 @@ export class File {
     });
   }
 
+  /**
+   * @private
+   */
   private static rimraf(de: DirectoryEntry): Promise<RemoveResult> {
-    return new Promise((resolve, reject) => {
+    return new Promise<RemoveResult>((resolve, reject) => {
       de.removeRecursively(() => {
         resolve({success: true, fileRemoved: de});
       }, (err) => {
@@ -1071,8 +1101,11 @@ export class File {
     });
   }
 
+  /**
+   * @private
+   */
   private static createWriter(fe: FileEntry): Promise<FileWriter> {
-    return new Promise((resolve, reject) => {
+    return new Promise<FileWriter>((resolve, reject) => {
       fe.createWriter((writer) => {
         resolve(writer);
       }, (err) => {
@@ -1082,7 +1115,14 @@ export class File {
     });
   }
 
-  private static write(writer: FileWriter, gu: string | Blob): Promise<void> {
+  /**
+   * @private
+   */
+  private static write(writer: FileWriter, gu: string | Blob): Promise<any> {
+    if (gu instanceof Blob) {
+      return this.writeFileInChunks(writer, gu);
+    }
+
     return new Promise<void>((resolve, reject) => {
       writer.onwriteend = (evt) => {
         if (writer.error) {
@@ -1092,6 +1132,34 @@ export class File {
         }
       };
       writer.write(gu);
+    });
+  }
+
+  /**
+   * @private
+   */
+  private static writeFileInChunks(writer: FileWriter, file: Blob) {
+    const BLOCK_SIZE = 1024 * 1024;
+    let writtenSize = 0;
+
+    function writeNextChunk() {
+      const size = Math.min(BLOCK_SIZE, file.size - writtenSize);
+      const chunk = file.slice(writtenSize, writtenSize + size);
+
+      writtenSize += size;
+      writer.write(chunk);
+    }
+
+    return new Promise<any>((resolve, reject) => {
+      writer.onerror = reject;
+      writer.onwrite = () => {
+        if (writtenSize < file.size) {
+          writeNextChunk();
+        } else {
+          resolve();
+        }
+      };
+      writeNextChunk();
     });
   }
 }

@@ -1,10 +1,8 @@
 import { get } from '../util';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from '@reactivex/rxjs';
 
 declare var window;
 declare var Promise;
-declare var $q;
-
 
 /**
  * @private
@@ -56,6 +54,11 @@ function setIndex(args: any[], opts: any = {}, resolve?: Function, reject?: Func
         resolve(result);
       }
     });
+  } else if (opts.callbackStyle === 'object' && opts.successName && opts.errorName) {
+    let obj: any = {};
+    obj[opts.successName] = resolve;
+    obj[opts.errorName] = reject;
+    args.push(obj);
   } else if (typeof opts.successIndex !== 'undefined' || typeof opts.errorIndex !== 'undefined') {
     // If we've specified a success/error index
     args.splice(opts.successIndex, 0, resolve);
@@ -102,17 +105,30 @@ function callCordovaPlugin(pluginObj: any, methodName: string, args: any[], opts
 }
 
 function getPromise(cb) {
+
+  const tryNativePromise = () => {
+    if (window.Promise) {
+      return new Promise((resolve, reject) => {
+        cb(resolve, reject);
+      });
+    } else {
+      console.error('No Promise support or polyfill found. To enable Ionic Native support, please add the es6-promise polyfill before this script, or run with a library like Angular 1/2 or on a recent browser.');
+    }
+  };
+
   if (window.angular) {
-    let $q = window.angular.injector(['ng']).get('$q');
-    return $q((resolve, reject) => {
-      cb(resolve, reject);
-    });
-  } else if (window.Promise) {
-    return new Promise((resolve, reject) => {
-      cb(resolve, reject);
-    });
+    let injector = window.angular.element(document.querySelector('[ng-app]') || document.body).injector();
+    if (injector) {
+      let $q = injector.get('$q');
+      return $q((resolve, reject) => {
+        cb(resolve, reject);
+      });
+    } else {
+      console.warn('Angular 1 was detected but $q couldn\'t be retrieved. This is usually when the app is not bootstrapped on the html or body tag. Falling back to native promises which won\'t trigger an automatic digest when promises resolve.');
+      return tryNativePromise();
+    }
   } else {
-    console.error('No Promise support or polyfill found. To enable Ionic Native support, please add the es6-promise polyfill before this script, or run with a library like Angular 1/2 or on a recent browser.');
+    return tryNativePromise();
   }
 }
 

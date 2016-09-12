@@ -1,5 +1,5 @@
 import { Cordova, Plugin } from './plugin';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from '@reactivex/rxjs';
 
 // below are taken from
 // https://raw.githubusercontent.com/Microsoft/cordova-plugin-code-push/master/typings/codePush.d.ts
@@ -401,6 +401,7 @@ export interface DownloadProgress {
 
 /**
  * @name CodePush
+ * @description
  * CodePush plugin for Cordova by Microsoft that supports iOS and Android.
  *
  * For more info, please see https://github.com/ksachdeva/ionic2-code-push-example

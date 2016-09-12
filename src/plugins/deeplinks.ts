@@ -1,5 +1,5 @@
 import { Cordova, Plugin } from './plugin';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from '@reactivex/rxjs';
 
 
 export interface DeeplinkMatch {
@@ -36,7 +36,8 @@ export interface DeeplinkMatch {
   plugin: 'ionic-plugin-deeplinks',
   pluginRef: 'IonicDeeplink',
   repo: 'https://github.com/driftyco/ionic-plugin-deeplinks',
-  platforms: ['iOS', 'Android']
+  platforms: ['iOS', 'Android'],
+  install: 'ionic plugin add ionic-plugin-deeplinks --variable URL_SCHEME=myapp --variable DEEPLINK_SCHEME=https --variable DEEPLINK_HOST=example.com --variable ANDROID_PATH_PREFIX=/'
 })
 export class Deeplinks {
 

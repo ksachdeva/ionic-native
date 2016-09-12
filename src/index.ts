@@ -20,6 +20,7 @@ import { Brightness } from './plugins/brightness';
 import { BLE } from './plugins/ble';
 import { BluetoothSerial } from './plugins/bluetoothserial';
 import { Calendar } from './plugins/calendar';
+import { CallNumber } from './plugins/call-number';
 import { Camera } from './plugins/camera';
 import { CameraPreview } from './plugins/camera-preview';
 import { CardIO } from './plugins/card-io';
@@ -40,6 +41,8 @@ import { EmailComposer } from './plugins/emailcomposer';
 import { EstimoteBeacons } from './plugins/estimote-beacons';
 import { Facebook } from './plugins/facebook';
 import { File } from './plugins/file';
+import { FileChooser } from './plugins/file-chooser';
+import { FileOpener } from './plugins/file-opener';
 import { Transfer } from './plugins/filetransfer';
 import { Flashlight } from './plugins/flashlight';
 import { Geofence } from './plugins/geofence';
@@ -63,13 +66,20 @@ import { LaunchNavigator } from './plugins/launchnavigator';
 import { LocalNotifications } from './plugins/localnotifications';
 import { MediaCapture } from './plugins/media-capture';
 import { NativeAudio } from './plugins/native-audio';
+import { NativePageTransitions } from './plugins/native-page-transitions';
 import { NativeStorage } from './plugins/nativestorage';
+import { Market } from './plugins/market';
 import { MediaPlugin } from './plugins/media';
+import { Mixpanel } from './plugins/mixpanel';
+import { MusicControls } from './plugins/music-controls';
 import { Network } from './plugins/network';
+import { NFC } from './plugins/nfc';
 import { OneSignal } from './plugins/onesignal';
 import { PhotoViewer } from './plugins/photo-viewer';
 import { ScreenOrientation } from './plugins/screen-orientation';
+import { PayPal } from './plugins/pay-pal';
 import { PinDialog } from './plugins/pin-dialog';
+import { PowerManagement } from './plugins/power-management';
 import { Printer } from './plugins/printer';
 import { Push } from './plugins/push';
 import { SafariViewController } from './plugins/safari-view-controller';
@@ -83,6 +93,7 @@ import { SpinnerDialog } from './plugins/spinnerdialog';
 import { Splashscreen } from './plugins/splashscreen';
 import { SQLite } from './plugins/sqlite';
 import { StatusBar } from './plugins/statusbar';
+import { StreamingMedia } from './plugins/streaming-media';
 import { ThreeDeeTouch } from './plugins/3dtouch';
 import { Toast } from './plugins/toast';
 import { TouchID } from './plugins/touchid';
@@ -92,6 +103,7 @@ import { Vibration } from './plugins/vibration';
 import { VideoEditor } from './plugins/video-editor';
 import { VideoPlayer } from './plugins/video-player';
 import { WebIntent } from './plugins/webintent';
+import { YoutubeVideoPlayer } from './plugins/youtube-video-player';
 import { Zip } from './plugins/zip';
 export * from './plugins/3dtouch';
 export * from './plugins/background-geolocation';
@@ -118,13 +130,18 @@ export * from './plugins/imageresizer';
 export * from './plugins/inappbrowser';
 export * from './plugins/launchnavigator';
 export * from './plugins/localnotifications';
+export * from './plugins/nfc';
 export * from './plugins/media';
 export * from './plugins/media-capture';
+export * from './plugins/mixpanel';
+export * from './plugins/pay-pal';
+export * from './plugins/native-page-transitions';
 export * from './plugins/printer';
 export * from './plugins/push';
 export * from './plugins/safari-view-controller';
 export * from './plugins/sms';
 export * from './plugins/spinnerdialog';
+export * from './plugins/streaming-media';
 export * from './plugins/toast';
 export * from './plugins/twitter-connect';
 export * from './plugins/video-editor';
@@ -143,6 +160,7 @@ BatteryStatus,
 Brightness,
 BLE,
 BluetoothSerial,
+CallNumber,
 CameraPreview,
 Clipboard,
 CodePush,
@@ -155,6 +173,8 @@ Diagnostic,
 EmailComposer,
 EstimoteBeacons,
 File,
+FileChooser,
+FileOpener,
 Flashlight,
 Geofence,
 Globalization,
@@ -165,13 +185,16 @@ InAppPurchase,
 Insomnia,
 Instagram,
 Keyboard,
+MusicControls,
 NativeAudio,
 NativeStorage,
 Network,
+Market,
 OneSignal,
 PhotoViewer,
 ScreenOrientation,
 PinDialog,
+PowerManagement,
 Screenshot,
 SecureStorage,
 Shake,
@@ -185,6 +208,7 @@ Transfer,
 TextToSpeech,
 Vibration,
 WebIntent,
+YoutubeVideoPlayer,
 Zip
 }
 
@@ -192,94 +216,106 @@ export * from './plugins/plugin';
 
 // Window export to use outside of a module loading system
 window['IonicNative'] = {
-  ActionSheet: ActionSheet,
-  AdMob: AdMob,
-  AndroidFingerprintAuth: AndroidFingerprintAuth,
-  AppAvailability: AppAvailability,
-  AppRate: AppRate,
-  AppVersion: AppVersion,
-  Badge: Badge,
-  BackgroundGeolocation: BackgroundGeolocation,
-  BackgroundMode: BackgroundMode,
-  BarcodeScanner: BarcodeScanner,
-  Base64ToGallery: Base64ToGallery,
-  BatteryStatus: BatteryStatus,
-  Brightness: Brightness,
-  BLE: BLE,
-  BluetoothSerial: BluetoothSerial,
-  Calendar: Calendar,
-  Camera: Camera,
-  CameraPreview: CameraPreview,
-  CardIO: CardIO,
-  Clipboard: Clipboard,
-  CodePush: CodePush,
-  Contacts: Contacts,
-  Crop: Crop,
-  DatePicker: DatePicker,
-  DBMeter: DBMeter,
-  Deeplinks: Deeplinks,
-  Device: Device,
-  DeviceAccounts: DeviceAccounts,
-  DeviceMotion: DeviceMotion,
-  DeviceOrientation: DeviceOrientation,
-  Dialogs: Dialogs,
-  Diagnostic: Diagnostic,
-  EmailComposer: EmailComposer,
-  EstimoteBeacons: EstimoteBeacons,
-  Facebook: Facebook,
-  File: File,
-  Flashlight: Flashlight,
-  Geofence: Geofence,
-  Geolocation: Geolocation,
-  Globalization: Globalization,
-  GooglePlus: GooglePlus,
-  GoogleMap: GoogleMap,
-  GoogleAnalytics: GoogleAnalytics,
-  Hotspot: Hotspot,
-  Httpd: Httpd,
-  IBeacon: IBeacon,
-  ImagePicker: ImagePicker,
-  ImageResizer: ImageResizer,
-  InAppBrowser: InAppBrowser,
-  InAppPurchase: InAppPurchase,
-  Instagram: Instagram,
-  IsDebug: IsDebug,
-  Keyboard: Keyboard,
-  LaunchNavigator: LaunchNavigator,
-  LocalNotifications: LocalNotifications,
-  MediaCapture: MediaCapture,
-  MediaPlugin: MediaPlugin,
-  NativeAudio: NativeAudio,
-  NativeStorage: NativeStorage,
-  Network: Network,
-  Printer: Printer,
-  Push: Push,
-  OneSignal: OneSignal,
-  PhotoViewer: PhotoViewer,
-  ScreenOrientation: ScreenOrientation,
-  PinDialog: PinDialog,
-  SafariViewController: SafariViewController,
-  Screenshot: Screenshot,
-  SecureStorage: SecureStorage,
-  Shake: Shake,
-  Sim: Sim,
-  SMS: SMS,
-  SocialSharing: SocialSharing,
-  SpinnerDialog: SpinnerDialog,
-  Splashscreen: Splashscreen,
-  SQLite: SQLite,
-  StatusBar: StatusBar,
-  ThreeDeeTouch: ThreeDeeTouch,
-  Toast: Toast,
-  TouchID: TouchID,
-  Transfer: Transfer,
-  TextToSpeech: TextToSpeech,
-  TwitterConnect: TwitterConnect,
-  VideoEditor: VideoEditor,
-  VideoPlayer: VideoPlayer,
-  Vibration: Vibration,
-  WebIntent: WebIntent,
-  Zip: Zip
+  ActionSheet,
+  AdMob,
+  AndroidFingerprintAuth,
+  AppAvailability,
+  AppRate,
+  AppVersion,
+  Badge,
+  BackgroundGeolocation,
+  BackgroundMode,
+  BarcodeScanner,
+  Base64ToGallery,
+  BatteryStatus,
+  Brightness,
+  BLE,
+  BluetoothSerial,
+  Calendar,
+  CallNumber,
+  Camera,
+  CameraPreview,
+  CardIO,
+  Clipboard,
+  CodePush,
+  Contacts,
+  Crop,
+  DatePicker,
+  DBMeter,
+  Deeplinks,
+  Device,
+  DeviceAccounts,
+  DeviceMotion,
+  DeviceOrientation,
+  Dialogs,
+  Diagnostic,
+  EmailComposer,
+  EstimoteBeacons,
+  Facebook,
+  File,
+  FileChooser,
+  FileOpener,
+  Flashlight,
+  Geofence,
+  Geolocation,
+  Globalization,
+  GooglePlus,
+  GoogleMap,
+  GoogleAnalytics,
+  Hotspot,
+  Httpd,
+  IBeacon,
+  ImagePicker,
+  ImageResizer,
+  InAppBrowser,
+  InAppPurchase,
+  Instagram,
+  IsDebug,
+  Keyboard,
+  LaunchNavigator,
+  LocalNotifications,
+  Market,
+  MediaCapture,
+  MediaPlugin,
+  Mixpanel,
+  MusicControls,
+  NativeAudio,
+  NativePageTransitions,
+  NativeStorage,
+  Network,
+  PayPal,
+  NFC,
+  Printer,
+  Push,
+  OneSignal,
+  PhotoViewer,
+  ScreenOrientation,
+  PinDialog,
+  PowerManagement,
+  SafariViewController,
+  Screenshot,
+  SecureStorage,
+  Shake,
+  Sim,
+  SMS,
+  SocialSharing,
+  SpinnerDialog,
+  Splashscreen,
+  SQLite,
+  StatusBar,
+  StreamingMedia,
+  ThreeDeeTouch,
+  Toast,
+  TouchID,
+  Transfer,
+  TextToSpeech,
+  TwitterConnect,
+  VideoEditor,
+  VideoPlayer,
+  Vibration,
+  WebIntent,
+  YoutubeVideoPlayer,
+  Zip
 };
 
 initAngular1(window['IonicNative']);
@@ -288,16 +324,16 @@ initAngular1(window['IonicNative']);
 // log an error if it didn't fire in a reasonable amount of time. Generally,
 // when this happens, developers should remove and reinstall plugins, since
 // an inconsistent plugin is often the culprit.
-let before = +new Date;
+const before = Date.now();
 
 let didFireReady = false;
-document.addEventListener('deviceready', function() {
-  console.log('DEVICE READY FIRED AFTER', (+new Date - before), 'ms');
+document.addEventListener('deviceready', () => {
+  console.log('DEVICE READY FIRED AFTER', (Date.now() - before), 'ms');
   didFireReady = true;
 });
 
-setTimeout(function() {
+setTimeout(() => {
   if (!didFireReady && window.cordova) {
-    console.warn('Native: deviceready did not fire within ' + DEVICE_READY_TIMEOUT + 'ms. This can happen when plugins are in an inconsistent state. Try removing plugins from plugins/ and reinstalling them.');
+    console.warn(`Native: deviceready did not fire within ${DEVICE_READY_TIMEOUT}ms. This can happen when plugins are in an inconsistent state. Try removing plugins from plugins/ and reinstalling them.`);
   }
 }, DEVICE_READY_TIMEOUT);
